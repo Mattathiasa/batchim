@@ -319,6 +319,14 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
 .phr li{grid-template-columns:minmax(0,1fr) auto auto}
 .xpfly{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--accent);color:var(--bg);font-weight:600;padding:6px 12px;border-radius:99px;font-size:.9rem;z-index:20;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
 .xpfly.on{opacity:1;transform:none}
+
+.quiz{display:grid;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.qz{display:grid;gap:8px}
+.qz>p:first-child{font-weight:500}
+.qopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px}
+.qopts .opt{font-size:1.05rem;padding:10px}
+.qfb{font-size:.92rem;min-height:1.2em}
+.prompt .big.sm{font-family:var(--f-body);font-size:clamp(1.3rem,4vw,1.7rem);font-weight:500;line-height:1.35}
 </style>
 </head>
 <body>
@@ -465,7 +473,7 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
   <section id="grammar" hidden>
     <div class="intro">
       <h2>Grammar</h2>
-      <p class="muted">Every pattern you need for Phases 2 to 4, in order. Do one or two lessons a day, read every example aloud, then mark the lesson done.</p>
+      <p class="muted">50 lessons. Lessons 1–28 are what you need before you arrive, in plan order. Lessons 29–50 are intermediate patterns for after you arrive. Read every example aloud, answer the check questions, then mark the lesson done.</p>
     </div>
     <div class="gram">
       <nav class="gnav" id="gnav" aria-label="Lessons"></nav>
@@ -636,7 +644,7 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
   <section id="drills" hidden>
     <div class="intro">
       <h2>Drills</h2>
-      <p class="muted">20 questions per round. Anything you miss comes back later in the same round, but only your first try counts. Exit bar for each phase: 18/20.</p>
+      <p class="muted">20 questions per round. Anything you miss comes back later in the same round, but only your first try counts. Exit bar for each phase: 18/20. Grammar check draws from the lessons you've marked done.</p>
     </div>
     <div class="drill-pick" id="drillPick"></div>
     <div class="card" id="drillCard" aria-live="polite"></div>
@@ -899,6 +907,152 @@ const PHR={
  'Emergency':[['도와주세요!','Help!'],['경찰을 불러 주세요','Please call the police (112)'],['구급차를 불러 주세요','Please call an ambulance (119)'],['길을 잃었어요','I’m lost'],['지갑을 잃어버렸어요','I lost my wallet']]
 };
 
+/* ---------- intermediate lessons (after arrival) ---------- */
+[
+ [5,"Comparing: 보다 · 제일","비교","보다 marks the thing you compare against. 더 (more) is optional once 보다 is there. 제일 or 가장 means “the most.”",
+  [["A is more … than B","A이/가 B보다 (더) + adjective"],["The most","제일 / 가장 + adjective"]],
+  [["서울이 대구보다 커요.","Seoul is bigger than Daegu."],["오늘이 어제보다 더 추워요.","Today is colder than yesterday."],["이게 제일 맛있어요.","This one is the most delicious."]],
+  "보다 goes on the loser of the comparison, not the winner. 커피보다 차가 비싸요 means tea is more expensive."],
+ [5,"Experience: (으)ㄴ 적이 있어요","경험","Talks about whether you have ever done something in your life.",
+  [["Vowel stem","ㄴ 적이 있어요 (간 적이 있어요)"],["Consonant stem","은 적이 있어요 (먹은 적이 있어요)"],["Never","(으)ㄴ 적이 없어요"],["Ever tried (most common)","아/어 본 적이 있어요"]],
+  [["한국에 가 본 적이 있어요?","Have you ever been to Korea?"],["김치를 먹어 본 적이 없어요.","I’ve never tried kimchi."],["서울에서 산 적이 있어요.","I’ve lived in Seoul before."]],
+  "For something that just happened once recently, use the plain past. 적 is for life experience, “ever.”"],
+ [5,"Trying: 아/어 보다","시도","Adds “try” to a verb. Here 보다 doesn’t mean “see.”",
+  [["Try doing","아/어 봐요 · 아/어 봤어요"],["Please try","아/어 보세요"]],
+  [["이거 한번 먹어 보세요.","Try this."],["한복을 입어 봤어요.","I tried on a hanbok."],["다시 전화해 볼게요.","I’ll try calling again."]],
+  "Shopkeepers say 입어 보세요 and 먹어 보세요 all the time. It’s an invitation, not a challenge."],
+ [5,"Time clauses: 때 · 전에 · 후에","시간","Say when something happens relative to something else.",
+  [["When","(으)ㄹ 때 (갈 때, 먹을 때)"],["When (past)","았/었을 때 (갔을 때)"],["Before","기 전에 (가기 전에)"],["After","(으)ㄴ 후에 / 다음에 (간 후에, 먹은 다음에)"],["With nouns","N 때 · N 전에 · N 후에 (점심 때, 수업 전에)"]],
+  [["한국에 갈 때 여권을 가져가세요.","Take your passport when you go to Korea."],["자기 전에 이를 닦아요.","I brush my teeth before bed."],["수업이 끝난 후에 만나요.","Let’s meet after class ends."]],
+  "기 전에 never takes past tense, even about the past: 자기 전에 숙제했어요 (I did homework before sleeping)."],
+ [5,"Describing nouns: 는 · (으)ㄴ · (으)ㄹ","관형형","Korean puts the whole description before the noun. “The book I read yesterday” becomes “yesterday read book.”",
+  [["Verb, now","는 (가는 사람)"],["Verb, past","(으)ㄴ (간 사람, 먹은 음식)"],["Verb, future","(으)ㄹ (갈 곳, 먹을 음식)"],["Adjective","(으)ㄴ (큰 집, 작은 방)"],["Words with 있다/없다","는 (맛있는 음식, 재미없는 영화)"]],
+  [["제가 좋아하는 음식은 김치찌개예요.","The food I like is kimchi stew."],["어제 만난 사람이 누구예요?","Who was the person you met yesterday?"],["내일 할 일이 많아요.","I have a lot to do tomorrow."],["매운 음식을 못 먹어요.","I can’t eat spicy food."]],
+  "Irregulars still apply: 춥다 → 추운, 살다 → 사는, 듣다 → 들은."],
+ [5,"Intentions: (으)려고 · (으)러","의도","(으)려고 means “in order to” or “planning to.” (으)러 means “to go or come somewhere to do something.”",
+  [["Plan to","(으)려고 해요 (가려고 해요)"],["In order to","(으)려고 + any verb"],["Go / come to do","(으)러 가요 / 와요 (먹으러 가요)"]],
+  [["내년에 대학원에 가려고 해요.","I plan to go to grad school next year."],["밥 먹으러 가요.","Let’s go eat."],["한국어를 배우려고 학원에 다녀요.","I go to an academy to learn Korean."]],
+  "(으)러 only works before movement verbs: 가다, 오다, 다니다. Anything else needs (으)려고."],
+ [5,"Permission: 아/어도 돼요 · (으)면 안 돼요","허락 · 금지","Ask for and give permission, or say something isn’t allowed.",
+  [["May I / it’s okay to","아/어도 돼요 (가도 돼요)"],["Must not","(으)면 안 돼요 (먹으면 안 돼요)"],["Don’t have to","안 아/어도 돼요 (안 와도 돼요)"]],
+  [["여기 앉아도 돼요?","May I sit here?"],["여기서 담배를 피우면 안 돼요.","You can’t smoke here."],["내일 안 와도 돼요.","You don’t have to come tomorrow."]],
+  "돼요 is 되다 + 어요. Writing 되요 is the most common spelling mistake, even among Koreans."],
+ [5,"If: (으)면","조건","Conditions: “if” or “when” something happens.",
+  [["Vowel or ㄹ stem","면 (가면, 살면)"],["Consonant stem","으면 (먹으면)"],["Noun","N(이)면 (학생이면)"]],
+  [["시간이 있으면 같이 가요.","If you have time, let’s go together."],["비가 오면 집에 있을 거예요.","If it rains, I’ll stay home."],["모르면 물어보세요.","If you don’t know, ask."]],
+  "For unlikely situations, start with 만약: 만약 돈이 많으면 세계 여행을 할 거예요."],
+ [5,"Know how: (으)ㄹ 줄 알아요","능력","For skills you learned. For whether something is possible right now, use (으)ㄹ 수 있어요.",
+  [["Know how to","(으)ㄹ 줄 알아요 (할 줄 알아요)"],["Don’t know how to","(으)ㄹ 줄 몰라요"]],
+  [["운전할 줄 알아요?","Can you drive?"],["김치찌개를 만들 줄 몰라요.","I don’t know how to make kimchi stew."],["한국어를 읽을 줄 알아요.","I can read Korean."]],
+  "The negative uses 몰라요, never 안 알아요."],
+ [5,"It seems: 것 같아요","추측","Guesses, and soft opinions. The ending before 것 decides the time.",
+  [["Seems to be happening","는 것 같아요 (오는 것 같아요)"],["Seems (adjective)","(으)ㄴ 것 같아요 (비싼 것 같아요)"],["Seems it happened","(으)ㄴ 것 같아요 (간 것 같아요)"],["Probably will","(으)ㄹ 것 같아요 (비가 올 것 같아요)"]],
+  [["비가 올 것 같아요.","It looks like it’s going to rain."],["이거 좀 비싼 것 같아요.","I think this is a bit expensive."],["민수 씨가 벌써 간 것 같아요.","Minsu seems to have left already."]],
+  "Koreans use 것 같아요 to soften opinions, even ones they’re sure of. It sounds polite, not unsure."],
+ [5,"Verbs as nouns: 기 · 는 것","명사형","Turns an action into a noun, like “-ing” in “Studying is fun.”",
+  [["-ing as a noun","기 (보기, 공부하기)"],["The act of","는 것 (보는 것, 사는 것)"],["Spoken form","는 거 (는 것 → 는 거)"]],
+  [["한국어 공부하기가 재미있어요.","Studying Korean is fun."],["제 취미는 사진 찍는 거예요.","My hobby is taking photos."],["운전하는 것이 어려워요.","Driving is difficult."]],
+  "Some patterns take only 기: 기 전에, 기 때문에, 기 시작하다, 기 쉽다, 기 어렵다."],
+ [5,"Change: 아/어지다 · 게 되다","변화","아/어지다 turns an adjective into “become.” 게 되다 means “end up doing” or “it came about that.”",
+  [["Adjective → become","아/어지다 (추워져요, 예뻐졌어요)"],["End up / come to","게 되다 (가게 됐어요)"]],
+  [["날씨가 추워졌어요.","The weather got cold."],["한국어가 점점 쉬워져요.","Korean is getting easier."],["한국에서 공부하게 됐어요.","I’m going to be studying in Korea (it worked out)."]],
+  "게 되다 suggests circumstances decided it, not only you. It’s a modest way to share good news."],
+ [5,"Even if: 아/어도","양보","“Even if” or “even though.” Built like 아/어서: present form minus 요, plus 도.",
+  [["Even if","아/어도 (비싸도, 먹어도)"],["Noun","N이어도 / N여도"],["No matter how","아무리 + 아/어도"]],
+  [["비가 와도 갈 거예요.","I’ll go even if it rains."],["아무리 공부해도 어려워요.","No matter how much I study, it’s hard."],["바빠도 매일 운동해요.","I exercise every day even though I’m busy."]],
+  "Same irregulars as the present form: 추워도, 들어도, 몰라도."],
+ [5,"While: (으)면서","동시","Two actions at the same time, by the same person.",
+  [["Vowel or ㄹ stem","면서 (보면서, 살면서)"],["Consonant stem","으면서 (먹으면서)"]],
+  [["음악을 들으면서 공부해요.","I study while listening to music."],["밥을 먹으면서 이야기했어요.","We talked while eating."],["일하면서 대학원에 다녀요.","I go to grad school while working."]],
+  "Both actions need the same subject. For two different people, use 는 동안: 제가 요리하는 동안 친구가 기다렸어요."],
+ [5,"Purpose: 기 위해서 · 도록","목적","기 위해서 is a formal “in order to.” 도록 means “so that.”",
+  [["In order to","기 위해서 (합격하기 위해서)"],["For (a noun)","N을/를 위해서 (가족을 위해서)"],["So that","도록 (늦지 않도록)"]],
+  [["장학금을 받기 위해서 열심히 공부해요.","I study hard to get a scholarship."],["가족을 위해서 일해요.","I work for my family."],["늦지 않도록 일찍 출발하세요.","Leave early so you aren’t late."]],
+  "In essays and presentations, prefer 기 위해서 over (으)려고."],
+ [5,"Reported speech: 다고 해요","간접 화법","Report what someone said. The ending depends on whether it was a statement, question, command or suggestion.",
+  [["Statement, verb","ㄴ다고 / 는다고 해요 (간다고, 먹는다고)"],["Statement, adjective","다고 해요 (바쁘다고)"],["Statement, noun","(이)라고 해요 (학생이라고)"],["Past","았/었다고 해요 (갔다고)"],["Question","냐고 해요 (가냐고)"],["Command","(으)라고 해요 (가라고)"],["Suggestion","자고 해요 (가자고)"]],
+  [["친구가 내일 온다고 했어요.","My friend said they’re coming tomorrow."],["교수님이 숙제를 내라고 하셨어요.","The professor told us to hand in the homework."],["같이 밥 먹자고 했어요.","They suggested eating together."],["뉴스에서 내일 춥다고 해요.","The news says it’ll be cold tomorrow."]],
+  "In speech these shrink: 온대요 (= 온다고 해요), 가래요, 먹재요. You’ll hear the short forms constantly."],
+ [5,"Looks: 아/어 보여요","외관","“Looks …” with adjectives. For “looks like a …” with a noun, use N 같아요.",
+  [["Looks (adjective)","아/어 보여요 (맛있어 보여요, 피곤해 보여요)"],["Looks like (noun)","N 같아요 (학생 같아요)"]],
+  [["이거 맛있어 보여요.","This looks delicious."],["피곤해 보여요. 괜찮아요?","You look tired. Are you okay?"],["그 가방 비싸 보여요.","That bag looks expensive."]],
+  "Only adjectives take 아/어 보여요. Verbs don’t: use 것 같아요 instead."],
+ [5,"Honorific 시","높임","Adding (으)시 to a verb shows respect to the person doing the action. Staff, shopkeepers and juniors use it with you; you use it about professors and elders.",
+  [["Present","(으)세요 (가세요, 읽으세요)"],["Past","(으)셨어요 (가셨어요)"],["Future","(으)실 거예요"],["Formal","(으)십니다"],["Particles","이/가 → 께서, 에게 → 께"]],
+  [["교수님이 연구실에 계세요.","The professor is in the office."],["할머니께서 주무세요.","Grandmother is sleeping."],["사장님이 벌써 가셨어요.","The boss already left."],["어디 가세요?","Where are you going? (polite)"]],
+  "Never use 시 about yourself. 제가 가요, not 제가 가세요."],
+ [5,"Casual speech: 반말","반말","What friends use with each other. Mostly, drop 요.",
+  [["Statement or question","drop 요: 가요 → 가, 먹어요 → 먹어"],["Noun + to be","야 / 이야 (친구야, 학생이야)"],["Let’s","자 (가자, 먹자)"],["Yes / no","응 / 아니"],["I, my","나, 내 (instead of 저, 제)"]],
+  [["밥 먹었어?","Did you eat?"],["응, 먹었어.","Yeah, I ate."],["같이 가자!","Let’s go together!"],["이거 내 거야.","This is mine."]],
+  "Call friends by name + 아 or 야 (지은아, 민수야). Use 반말 only after you’ve been invited to."],
+ [5,"More particles","조사 2","The particles you’ll need beyond the basic five.",
+  [["Until","까지 (5시까지)"],["From (time)","부터 (9시부터)"],["Only","만 (하나만)"],["Nothing but (+ negative)","밖에 + 없다 / 안 (하나밖에 없어요)"],["By means of / toward","(으)로 (버스로, 오른쪽으로)"],["To / from a person","한테, 에게 / 한테서, 에게서"],["Like","처럼 (가수처럼)"],["Every","마다 (날마다, 주말마다)"]],
+  [["아홉 시부터 다섯 시까지 일해요.","I work from 9 to 5."],["버스로 학교에 가요.","I go to school by bus."],["친구한테 선물을 줬어요.","I gave my friend a gift."],["돈이 만 원밖에 없어요.","I only have 10,000 won."]],
+  "(으)로: after a vowel or ㄹ use 로 (지하철로); after other consonants use 으로 (손으로)."],
+ [5,"Reactions: 네요 · 군요 · 죠","종결 어미","Small endings that carry a lot of feeling.",
+  [["Just noticed","네요 (맛있네요!)"],["Just realized","군요 (그렇군요)"],["Right? / confirming","죠 = 지요 (맛있죠?)"],["Soft suggestion","죠 (시작하죠)"]],
+  [["한국어를 잘하시네요!","You speak Korean well!"],["아, 그렇군요.","Oh, I see."],["오늘 춥죠?","It’s cold today, isn’t it?"],["이제 시작하죠.","Let’s start now."]],
+  "Use 네요 only for what you’ve just noticed. Saying a fact you already knew with 네요 sounds odd."],
+ [5,"Explaining: 거든요 · 는데요","설명","거든요 gives a reason the listener didn’t know. 는데요 trails off politely, which softens refusals and requests.",
+  [["Reason they didn’t know","거든요 (바쁘거든요)"],["Soft trailing","는데요 / (으)ㄴ데요 (지금 없는데요)"],["Polite refusal","좀 … (으)ㄴ데요"]],
+  [["오늘 못 가요. 일이 있거든요.","I can’t go today. I’ve got something on, you see."],["지금 사장님이 안 계신데요.","The boss isn’t in right now…"],["그건 좀 어려운데요.","That’s a bit difficult…"]],
+  "거든요 assumes the listener didn’t know. With professors, a plain 아/어서 sentence is safer: 일이 있어서 못 가요."]
+].forEach(g=>GRAMMAR.push({ph:g[0],t:g[1],k:g[2],x:g[3],form:g[4],ex:g[5],w:g[6]}));
+
+/* ---------- check-yourself questions, one list per lesson (answer is always the first option) ---------- */
+const QUIZ=[
+ [["Which sentence has natural word order?",["저는 밥을 먹어요.","저는 먹어요 밥을.","먹어요 저는 밥을."]],["Where does the verb go?",["At the end","At the start","After the subject"]]],
+ [["책___ 재미있어요.",["책은","책는"]],["저___ 학생이에요.",["저는","저은"]]],
+ [["Who came?",["누가 왔어요?","누는 왔어요?","누구가 왔어요?"]],["It’s raining.",["비가 와요.","비이 와요.","비를 와요."]]],
+ [["I drink coffee.",["커피를 마셔요.","커피을 마셔요.","커피가 마셔요."]],["I read a book.",["책을 읽어요.","책를 읽어요.","책은 읽어요를."]]],
+ [["I’m a doctor.",["의사예요.","의사이에요.","의사요."]],["I’m not a student.",["학생이 아니에요.","학생을 아니에요.","학생 안이에요."]]],
+ [["Do you have time?",["시간 있어요?","시간이에요?","시간 없어요?"]],["I don’t have money.",["돈이 없어요.","돈이 안 있어요.","돈이 아니에요."]]],
+ [["I go to school.",["학교에 가요.","학교에서 가요.","학교를 가에요."]],["Let’s meet tomorrow.",["내일 만나요.","내일에 만나요.","내일에서 만나요."]]],
+ [["I study at the library.",["도서관에서 공부해요.","도서관에 공부해요.","도서관을 공부해요."]],["I’m at home.",["집에 있어요.","집에서 있어요.","집을 있어요."]]],
+ [["That one, far from both of us",["저거","그거","이거"]],["이거 + subject marker",["이게","이거가","이것가"]]],
+ [["I’m a student too.",["저도 학생이에요.","저는도 학생이에요.","저하고 학생이에요."]],["my name",["제 이름","저 이름","저는 이름"]]],
+ [["먹다 → present polite",["먹어요","먹아요","먹요"]],["보다 → present polite",["봐요","보어요","버요"]]],
+ [["가다 → formal",["갑니다","가습니다","가니다"]],["먹다 → formal",["먹습니다","먹니다","먹읍니다"]]],
+ [["마시다 → past",["마셨어요","마셔요","마싰어요"]],["하다 → past",["했어요","하았어요","해요"]]],
+ [["먹다 → future",["먹을 거예요","먹 거예요","먹는 거예요"]],["I’ll call. (a promise)",["제가 전화할게요.","제가 전화할까요?","제가 전화해요?"]]],
+ [["I don’t study.",["공부 안 해요.","안 공부해요.","공부 못 안 해요."]],["I can’t eat spicy food.",["매운 음식을 못 먹어요.","매운 음식을 먹지 마세요.","매운 음식을 안 먹을래요."]]],
+ [["I want to go.",["가고 싶어요.","가 싶어요.","가고 싶어해요."]],["My friend wants to eat.",["친구가 먹고 싶어해요.","친구가 먹고 싶어요.","친구가 먹어 싶어해요."]]],
+ [["읽다 + can",["읽을 수 있어요","읽 수 있어요","읽는 수 있어요"]],["I can’t go now.",["지금 갈 수 없어요.","지금 갈 수 있어요.","지금 가 수 없어요."]]],
+ [["Please sit.",["앉으세요.","앉세요.","앉아세요."]],["Please don’t take photos.",["사진 찍지 마세요.","사진 안 찍으세요.","사진 찍지 않아요."]]],
+ [["Please help me.",["도와 주세요.","돕 주세요.","돕어 주세요."]],["Water, please.",["물 주세요.","물 해 주세요.","물이 주세요."]]],
+ [["I’m studying right now.",["지금 공부하고 있어요.","지금 공부하고 해요.","지금 공부해고 있어요."]],["What are you doing?",["뭐 하고 있어요?","뭐 있어요?","뭐 하고 싶어요?"]]],
+ [["It’s cheap and delicious.",["싸고 맛있어요.","싸서 맛있어요.","싸지만 맛있어요."]],["I ate, then went to school.",["밥을 먹고 학교에 갔어요.","밥을 먹지만 학교에 갔어요.","밥을 먹으면 학교에 갔어요."]]],
+ [["Korean is hard but fun.",["어렵지만 재미있어요.","어렵고 재미있어요.","어려워서 재미있어요."]],["It’s expensive but tasty.",["비싸지만 맛있어요.","비싸서 맛있어요.","비싸면 맛있어요."]]],
+ [["Sorry I’m late.",["늦어서 죄송합니다.","늦었어서 죄송합니다.","늦으니까 죄송합니다."]],["I was hungry, so I ate.",["배가 고파서 먹었어요.","배가 고프서 먹었어요.","배가 고팠어서 먹었어요."]]],
+ [["It’s raining, so take an umbrella.",["비가 오니까 우산을 가져가세요.","비가 와서 우산을 가져가세요.","비가 오고 우산을 가져가세요."]],["먹다 + (으)니까",["먹으니까","먹니까","먹어니까"]]],
+ [["바쁘다 + (으)ㄴ데",["바쁜데","바쁘는데","바빠는데"]],["가다 + 는데",["가는데","간데","갈데"]]],
+ [["When are you coming?",["언제 와요?","어디 와요?","왜 와요?"]],["What time is it?",["몇 시예요?","뭐 시예요?","얼마 시예요?"]]],
+ [["Shall we go together?",["같이 갈까요?","같이 갈게요.","같이 가야 해요."]],["I have to get a visa.",["비자를 받아야 해요.","비자를 받을까요?","비자를 받고 싶어요."]]],
+ [["춥다 → present polite",["추워요","춥어요","추어요"]],["듣다 → present polite",["들어요","듣어요","드러요"]]],
+ [["Coffee is more expensive than tea.",["커피가 차보다 비싸요.","차가 커피보다 비싸요.","커피보다 차가 비싸요."]],["I like this one the most.",["이게 제일 좋아요.","이게 보다 좋아요.","이게 더 제일 좋아요."]]],
+ [["Have you ever been to Korea?",["한국에 가 본 적이 있어요?","한국에 가는 적이 있어요?","한국에 갈 적이 있어요?"]],["I’ve never eaten it.",["먹은 적이 없어요.","먹는 적이 없어요.","먹 적이 없어요."]]],
+ [["Please try it on.",["입어 보세요.","입고 보세요.","입어 봐서요."]],["I tried calling.",["전화해 봤어요.","전화하고 봤어요.","전화해 보세요."]]],
+ [["before sleeping",["자기 전에","잔 전에","자는 전에"]],["after eating",["먹은 후에","먹기 후에","먹을 후에"]]],
+ [["the person who is eating (now)",["먹는 사람","먹은 사람","먹을 사람"]],["a big house",["큰 집","크는 집","클 집"]]],
+ [["Let’s go eat.",["밥 먹으러 가요.","밥 먹으러 공부해요.","밥 먹을러 가요."]],["I plan to buy a phone.",["휴대폰을 사려고 해요.","휴대폰을 사러 해요.","휴대폰을 사려고 가요?"]]],
+ [["May I take a photo?",["사진 찍어도 돼요?","사진 찍으면 안 돼요?","사진 찍지 마세요?"]],["Which spelling is correct?",["돼요","되요"]]],
+ [["먹다 + (으)면",["먹으면","먹면","먹어면"]],["if you have time",["시간이 있으면","시간이 있면","시간이 있어면"]]],
+ [["I don’t know how to swim.",["수영할 줄 몰라요.","수영할 줄 안 알아요.","수영할 줄 없어요."]],["만들다 + (으)ㄹ 줄 알아요",["만들 줄 알아요","만드는 줄 알아요","만들을 줄 알아요"]]],
+ [["It looks like it’s going to rain.",["비가 올 것 같아요.","비가 온 것 같아요.","비가 오는 것 같아해요."]],["I think this (in front of me) is expensive.",["비싼 것 같아요.","비싸는 것 같아요.","비싼 것 같아해요."]]],
+ [["My hobby is reading.",["제 취미는 책을 읽는 거예요.","제 취미는 책을 읽어요.","제 취미는 책을 읽은 거예요."]],["Which ending goes before 전에?",["기","는 것","(으)ㄴ"]]],
+ [["The weather got cold.",["날씨가 추워졌어요.","날씨가 추웠어요.","날씨가 춥게 해요."]],["It worked out that I’ll study in Korea.",["한국에서 공부하게 됐어요.","한국에서 공부해졌어요.","한국에서 공부하려고 했어요."]]],
+ [["even if it rains",["비가 와도","비가 오도","비가 오면"]],["바쁘다 + 아/어도",["바빠도","바쁘어도","바뻐도"]]],
+ [["while listening",["들으면서","듣으면서","들면서"]],["while eating",["먹으면서","먹면서","먹어면서"]]],
+ [["in order to get a scholarship",["장학금을 받기 위해서","장학금을 받는 위해서","장학금을 받을 위해서"]],["for my family",["가족을 위해서","가족이 위해서","가족 위하기"]]],
+ [["My friend said he’s busy.",["친구가 바쁘다고 했어요.","친구가 바쁜다고 했어요.","친구가 바쁘라고 했어요."]],["The professor told me to come.",["교수님이 오라고 하셨어요.","교수님이 온다고 하셨어요.","교수님이 오자고 하셨어요."]]],
+ [["You look tired.",["피곤해 보여요.","피곤해 봐요.","피곤한 보여요."]],["That looks delicious.",["맛있어 보여요.","맛있게 봐요.","맛있는 보여요."]]],
+ [["Respectfully: the professor left.",["교수님이 가셨어요.","교수님이 가세요었어요.","교수님이 가시었어요요."]],["About yourself: I’m going home.",["집에 가요.","집에 가세요.","집에 가셨어요."]]],
+ [["Casual: Did you eat?",["밥 먹었어?","밥 먹었어요?","밥 먹었습니까?"]],["Casual: Let’s go!",["가자!","가요!","갑시다!"]]],
+ [["by subway",["지하철로","지하철으로","지하철에"]],["I only have one.",["하나밖에 없어요.","하나밖에 있어요.","하나만 없어요."]]],
+ [["Tasting it: Oh, it’s delicious!",["맛있네요!","맛있죠?","맛있군요?"]],["It’s cold today, isn’t it?",["오늘 춥죠?","오늘 춥네요?","오늘 추워졌어요?"]]],
+ [["I can’t come. I’m busy, you see.",["바쁘거든요.","바쁘죠.","바쁘네요."]],["Softly saying no: that’s a bit difficult…",["좀 어려운데요.","좀 어렵거든요?","좀 어려워질까요."]]]
+];
+
 const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
@@ -1015,9 +1169,14 @@ const RULES=[
  {n:'Nasalization',k:'비음화',how:'A final ㄱ, ㄷ or ㅂ sound before ㄴ or ㅁ becomes the nasal of the same mouth position: ㄱ→ㅇ, ㄷ→ㄴ, ㅂ→ㅁ.',why:'Every formal verb ending (습니다, 입니다) goes through this.',ex:[['합니다','함니다','do (formal)'],['국물','궁물','soup broth'],['먹는','멍는','eating'],['학년','항년','school year']]},
  {n:'Palatalization',k:'구개음화',how:'A final ㄷ or ㅌ followed by 이 becomes ㅈ or ㅊ.',why:'Small rule, but it shows up in very common words.',ex:[['같이','가치','together'],['해돋이','해도지','sunrise'],['굳이','구지','insistently']]},
  {n:'Carryover',k:'연음',how:'When the next syllable starts with the silent ㅇ, the final consonant slides over and becomes its first sound.',why:'Happens in almost every sentence. If a word sounds choppy when you read it, you probably skipped this.',ex:[['한국어','한구거','Korean language'],['맛있어요','마시써요','it’s delicious'],['읽어요','일거요','I read'],['앉으세요','안즈세요','please sit']]},
- {n:'Silent and strong ㅎ',k:'ㅎ 탈락 · 격음화',how:'A final ㅎ before a vowel disappears. Next to ㄱ, ㄷ or ㅈ it merges with them into ㅋ, ㅌ or ㅊ.',why:'좋아요 and 많이 are daily words.',ex:[['좋아요','조아요','it’s good'],['많이','마니','a lot'],['좋다','조타','to be good'],['축하해요','추카해요','congratulations']]},
+ {n:'Silent and strong ㅎ',k:'ㅎ 탈락 · 격음화',how:'A final ㅎ before a vowel disappears. Next to ㄱ, ㄷ or ㅈ it merges with them into ㅋ, ㅌ or ㅊ. Before ㅅ it makes ㅆ, and before ㄴ it turns into ㄴ.',why:'좋아요, 많이 and 좋습니다 are daily words.',ex:[['좋아요','조아요','it’s good'],['많이','마니','a lot'],['좋다','조타','to be good'],['축하해요','추카해요','congratulations'],['좋습니다','조씀니다','it’s good (formal)'],['놓는','논는','putting']]},
  {n:'Final sounds',k:'받침 대표음',how:'At the end of a syllable only 7 sounds exist: ㄱ ㄴ ㄷ ㄹ ㅁ ㅂ ㅇ. Every other final letter collapses into one of them.',why:'This is why ㅅ, ㅈ, ㅊ, ㅌ and ㅎ all sound like ㄷ at the end.',ex:[['옷','옫','clothes'],['부엌','부억','kitchen'],['꽃','꼳','flower']]},
- {n:'Tensing',k:'경음화',how:'After a final ㄱ, ㄷ or ㅂ sound, a following ㄱ ㄷ ㅂ ㅅ ㅈ becomes tense: ㄲ ㄸ ㅃ ㅆ ㅉ.',why:'You’ll say 학교 (school) every day.',ex:[['학교','학꾜','school'],['먹습니다','먹씀니다','eat (formal)'],['식당','식땅','restaurant']]},
+ {n:'Tensing',k:'경음화',how:'After a final ㄱ, ㄷ or ㅂ sound, a following ㄱ ㄷ ㅂ ㅅ ㅈ becomes tense: ㄲ ㄸ ㅃ ㅆ ㅉ. The same happens after the future ㄹ in (으)ㄹ 거예요 and (으)ㄹ 수 있어요.',why:'You’ll say 학교 (school) and 할 거예요 every day.',ex:[['학교','학꾜','school'],['먹습니다','먹씀니다','eat (formal)'],['식당','식땅','restaurant'],['할 거예요','할 꺼예요','will do'],['갈 수 있어요','갈 쑤 이써요','can go']]},
+ {n:'Double final consonants',k:'겹받침',how:'Some syllables end in two consonants. Before another consonant, or at the end of a word, you say only one of them, usually the first. For ㄺ and ㄻ you say the second. Before a vowel, both are heard: the second one carries over.',why:'Core words like 없다, 앉다, 읽다 and 값 have double finals. One exception to learn: 밟다 → 밥따.',ex:[['값','갑','price'],['없다','업따','to not have'],['앉다','안따','to sit'],['여덟','여덜','eight'],['닭','닥','chicken'],['삶','삼','life']]},
+ {n:'ㄹ said as ㄴ',k:'ㄹ의 비음화',how:'After ㅁ or ㅇ, ㄹ is said as ㄴ. After ㄱ or ㅂ, the ㄹ becomes ㄴ and then nasalization changes the ㄱ or ㅂ too.',why:'Common in Sino-Korean words: place names, academic terms, titles.',ex:[['종로','종노','Jongno (Seoul)'],['심리','심니','psychology'],['대통령','대통녕','president'],['협력','혐녁','cooperation']]},
+ {n:'Extra ㄴ',k:'ㄴ 첨가',how:'When two words or word parts join and the second starts with 이, 야, 여, 요 or 유, an extra ㄴ sound can appear. Other rules then apply on top.',why:'무슨 일이에요? (What’s the matter?) uses it.',ex:[['꽃잎','꼰닙','petal'],['한여름','한녀름','midsummer'],['색연필','생년필','colored pencil'],['무슨 일','무슨 닐','what matter']]},
+ {n:'Compound tensing',k:'사잇소리',how:'When two nouns join into one word, the first consonant of the second noun often turns tense. Spelling doesn’t show it, so learn these by ear.',why:'Food and everyday compounds are full of it.',ex:[['비빔밥','비빔빱','bibimbap'],['물병','물뼝','water bottle'],['길가','길까','roadside'],['눈사람','눈싸람','snowman']]},
+ {n:'The vowel ㅢ',k:'의',how:'At the start of a word, 의 is said as written. After a consonant it becomes 이. In later syllables 이 is also accepted, and the particle 의 (of) is usually said 에.',why:'You’ll meet 의사 (doctor), 회의 (meeting) and 의 (of) constantly.',ex:[['의사','의사','doctor'],['희망','히망','hope'],['회의','회이','meeting'],['나의','나에','my']]},
  {n:'Double ㄹ',k:'유음화',how:'ㄴ next to ㄹ, in either order, becomes ㄹㄹ.',why:'Shows up in place names around Daegu and Gyeongju.',ex:[['신라','실라','Silla kingdom'],['설날','설랄','Lunar New Year'],['연락','열락','contact']]}
 ];
 $('rulesList').innerHTML=RULES.map(r=>`<article class="rule">
@@ -1028,9 +1187,9 @@ $('rulesList').innerHTML=RULES.map(r=>`<article class="rule">
 /* ---------- grammar ---------- */
 const gdone=store.get('kbj-gdone',{});
 let gi=store.get('kbj-gi',0);if(gi>=GRAMMAR.length)gi=0;
-const PH_NAME={2:'Phase 2 · Sentence skeleton',3:'Phase 3 · Verbs and time',4:'Phase 4 · Connecting ideas'};
+const PH_NAME={2:'Phase 2 · Sentence skeleton',3:'Phase 3 · Verbs and time',4:'Phase 4 · Connecting ideas',5:'After arrival · Intermediate'};
 function renderGnav(){
-  $('gnav').innerHTML=[2,3,4].map(ph=>`<div class="grp"><span class="label" style="padding:0 10px 4px">${PH_NAME[ph]}</span>${GRAMMAR.map((g,i)=>g.ph!==ph?'':`<button type="button" data-g="${i}" aria-current="${i===gi}"><span class="n">${i+1}</span><span>${g.t}</span>${gdone[i]?'<span class="dn">✓</span>':''}</button>`).join('')}</div>`).join('');
+  $('gnav').innerHTML=[2,3,4,5].map(ph=>`<div class="grp"><span class="label" style="padding:0 10px 4px">${PH_NAME[ph]}</span>${GRAMMAR.map((g,i)=>g.ph!==ph?'':`<button type="button" data-g="${i}" aria-current="${i===gi}"><span class="n">${i+1}</span><span>${g.t}</span>${gdone[i]?'<span class="dn">✓</span>':''}</button>`).join('')}</div>`).join('');
 }
 function renderLesson(){
   const g=GRAMMAR[gi];
@@ -1039,6 +1198,7 @@ function renderLesson(){
    <div class="tbl-wrap"><table class="tbl"><tbody>${g.form.map(f=>`<tr><th>${f[0]}</th><td class="k">${f[1]}</td></tr>`).join('')}</tbody></table></div>
    <div class="examples">${g.ex.map(e=>`<div class="exr"><span class="kr">${e[0]}</span><span class="en">${e[1]}</span>${listenBtn(e[0])}</div>`).join('')}</div>
    <p class="watch"><b>Watch out.</b> ${g.w}</p>
+   ${QUIZ[gi]?`<div class="quiz"><span class="label">Check yourself</span>${QUIZ[gi].map((q,qi)=>`<div class="qz" data-qz="${qi}"><p>${q[0]}</p><div class="qopts">${shuffle(q[1]).map(o=>`<button class="opt k" type="button" data-qo="${esc(o)}">${o}</button>`).join('')}</div><p class="qfb" aria-live="polite"></p></div>`).join('')}</div>`:''}
    <div class="row">
      <button class="btn ghost" type="button" data-gstep="-1"${gi===0?' disabled':''}>Previous</button>
      <button class="btn${gdone[gi]?' good':''}" type="button" data-gdone>${gdone[gi]?'Done ✓':'Mark as done'}</button>
@@ -1047,6 +1207,10 @@ function renderLesson(){
 }
 $('gnav').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;gi=+b.dataset.g;store.set('kbj-gi',gi);renderGnav();renderLesson();if(window.innerWidth<760)$('lesson').scrollIntoView({block:'start'})});
 $('lesson').addEventListener('click',e=>{
+  const qo=e.target.closest('[data-qo]');
+  if(qo){const box=qo.closest('[data-qz]');if(box.dataset.done)return;box.dataset.done='1';const q=QUIZ[gi][+box.dataset.qz],ans=q[1][0],ok=qo.dataset.qo===ans;
+    box.querySelectorAll('[data-qo]').forEach(b=>{b.disabled=true;if(b.dataset.qo===ans)b.classList.add('right')});if(!ok)qo.classList.add('wrong');else track('dc');
+    box.querySelector('.qfb').innerHTML=ok?'<b style="color:var(--ok)">Correct.</b>':`<b style="color:var(--red)">Not quite.</b> The answer is <span class="ko">${ans}</span>.`;return}
   const s=e.target.closest('[data-gstep]');if(s){gi=Math.min(GRAMMAR.length-1,Math.max(0,gi+ +s.dataset.gstep));store.set('kbj-gi',gi);renderGnav();renderLesson();$('lesson').scrollIntoView({block:'start'});return}
   if(e.target.closest('[data-gdone]')){gdone[gi]=!gdone[gi];store.set('kbj-gdone',gdone);if(gdone[gi])track('ls');renderGnav();renderLesson()}
 });
@@ -1194,7 +1358,14 @@ const RULEQ=[
  ['설날','설랄',['설날','선날','서랄'],'Double ㄹ','Lunar New Year'],['먹습니다','먹씀니다',['먹습니다','먹슴니다','멍씀니다'],'Tensing + nasalization','eat (formal)'],
  ['학교','학꾜',['학교','하교','항교'],'Tensing','school'],['부엌','부억',['부언','부엇','부엉'],'Final sounds','kitchen'],
  ['옷','옫',['오스','옹','오'],'Final sounds','clothes'],['입니다','임니다',['입니다','이비다','인니다'],'Nasalization','is (formal)'],
- ['음악','으막',['음악','으낙','음막'],'Carryover','music'],['국립','궁닙',['국립','궁립','국닙'],'Nasalization','national']
+ ['음악','으막',['음악','으낙','음막'],'Carryover','music'],['국립','궁닙',['국립','궁립','국닙'],'Nasalization','national'],
+ ['꽃잎','꼰닙',['꼬칩','꼳입','꽃입'],'Extra ㄴ + nasalization','petal'],['한여름','한녀름',['하녀름','한여름','할려름'],'Extra ㄴ','midsummer'],
+ ['종로','종노',['종로','졸로','존노'],'ㄹ said as ㄴ','Jongno'],['심리','심니',['심리','실리','시미'],'ㄹ said as ㄴ','psychology'],
+ ['대통령','대통녕',['대통령','대톨령','대통년'],'ㄹ said as ㄴ','president'],['값','갑',['갓','감','갑스'],'Double final','price'],
+ ['없다','업따',['업다','엇다','없따'],'Double final + tensing','to not have'],['여덟','여덜',['여덥','여더','여덟'],'Double final','eight'],
+ ['닭','닥',['달','다','닭'],'Double final','chicken'],['희망','히망',['희망','휘망','흐망'],'The vowel ㅢ','hope'],
+ ['놓는','논는',['녿는','노는','놓는'],'ㅎ before ㄴ','putting'],['물병','물뼝',['물병','물펑','뭅병'],'Compound tensing','water bottle'],
+ ['할 거예요','할 꺼예요',['할 거예요','하 거예요','할 커예요'],'Tensing after ㄹ','will do'],['좋습니다','조씀니다',['좋습니다','조슴니다','조씁니다'],'ㅎ before ㅅ + nasalization','it’s good (formal)']
 ].map(r=>({show:r[0],ans:r[1],opts:[r[1],...r[2]],say:r[0],kind:'k',q:'How does this sound?',hint:`${r[3]}. Meaning: ${r[4]}.`}));
 const PARTS={topic:['은','는','Topic marker (은/는)'],subj:['이','가','Subject marker (이/가)'],obj:['을','를','Object marker (을/를)']};
 const NOUNS=VOCAB.filter(v=>['People','Places','Food','Things','School'].includes(v.cat)&&!['저','우리'].includes(v.ko));
@@ -1222,13 +1393,20 @@ function wordItem(){
   const opts=shuffle([v.en,...shuffle(same).slice(0,3).map(x=>x.en)]);
   return {show:v.ko,ans:v.en,opts,say:v.ko,kind:'e',q:'What does this mean?',hint:`${v.ko} = ${v.en}.`};
 }
+function grammarItems(){
+  const doneIdx=GRAMMAR.map((_,i)=>i).filter(i=>gdone[i]&&QUIZ[i]);
+  const idx=doneIdx.length>=6?doneIdx:GRAMMAR.map((_,i)=>i).slice(0,Math.max(10,(Math.max(-1,...doneIdx)+1))).filter(i=>QUIZ[i]);
+  const pool=shuffle(idx.flatMap(i=>QUIZ[i].map(q=>({i,q}))));
+  return pool.slice(0,20).map(({i,q})=>({show:q[0],small:true,ans:q[1][0],opts:shuffle(q[1]),say:/[가-힣]/.test(q[1][0])?q[1][0]:'',kind:'k',q:`Lesson ${i+1} · ${GRAMMAR[i].t}`,hint:GRAMMAR[i].w}));
+}
 const many=(fn,n)=>{const out=[],seen=new Set();let g=0;while(out.length<n&&g<500){g++;const it=fn();const key=it.show+it.q;if(seen.has(key))continue;seen.add(key);out.push(it)}return out};
 const DRILLS={
  letters:{name:'Letters',sub:'Phase 1',build(){return shuffle(letterItems).slice(0,20).map(it=>{const pool=shuffle(it.pool.filter(x=>x!==it.ans));const extra=shuffle(ALLR.filter(x=>x!==it.ans&&!pool.includes(x)));return {...it,opts:shuffle([it.ans,...pool,...extra].slice(0,4))}})}},
  rules:{name:'Sound rules',sub:'Phase 1',build(){return shuffle(RULEQ).slice(0,20).map(it=>({...it,opts:shuffle(it.opts)}))}},
  particles:{name:'Particles',sub:'Phase 2',build(){return many(particleItem,20)}},
  verbs:{name:'Verb forms',sub:'Phase 3',build(){return many(verbItem,20)}},
- words:{name:'Words',sub:'Phase 4',build(){return many(wordItem,20)}}
+ words:{name:'Words',sub:'Phase 4',build(){return many(wordItem,20)}},
+ grammar:{name:'Grammar check',sub:'Any phase',build(){return grammarItems()}}
 };
 let cur=store.get('kbj-drill','letters');if(!DRILLS[cur])cur='letters';
 let st=null;const best=store.get('kbj-best',{});
@@ -1240,7 +1418,7 @@ function renderQ(){
   if(st.i>=st.q.length)return renderEnd();
   const it=st.q[st.i],first=st.i<20;
   card.innerHTML=`<div class="qtop"><span>${first?'Question '+(st.i+1)+' of 20':'Retry: missed earlier'}</span><span>Score ${st.score}</span></div>
-   <div class="prompt"><span class="label">${it.q}</span><span class="big">${it.show}</span></div>
+   <div class="prompt"><span class="label">${it.q}</span><span class="big${it.small?' sm':''}">${it.show}</span></div>
    <div class="opts">${it.opts.map(o=>`<button class="opt ${it.kind}" type="button" data-o="${esc(o)}">${o}</button>`).join('')}</div>
    <div id="fb"></div>`;
   st.answered=false;
@@ -1254,13 +1432,13 @@ card.addEventListener('click',e=>{
   if(!ok){b.classList.add('wrong');if(first){st.missed.push(it.show);st.q.push({...it,opts:shuffle(it.opts)})}}
   else if(first){st.score++;track('dc')}
   $('fb').innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?'Correct.':'Not this time.'}</b><span>The answer is <b class="ko">${it.ans}</b>.</span>${it.hint?`<span>${it.hint}</span>`:''}</div>
-   <div class="row" style="margin-top:12px"><button class="btn" type="button" data-next>Next</button>${listenBtn(it.say)}</div>`;
+   <div class="row" style="margin-top:12px"><button class="btn" type="button" data-next>Next</button>${it.say?listenBtn(it.say):''}</div>`;
   card.querySelector('[data-next]').focus();
 });
 function renderEnd(){
   const prev=best[cur];if(prev==null||st.score>prev){best[cur]=st.score;store.set('kbj-best',best)}
   recordDrill(cur,st.score);
-  const pass=st.score>=18,where={letters:'Hangul',rules:'Sound rules',particles:'Grammar (lessons 2–4)',verbs:'Verbs',words:'Words'}[cur];
+  const pass=st.score>=18,where={letters:'Hangul',rules:'Sound rules',particles:'Grammar (lessons 2–4)',verbs:'Verbs',words:'Words',grammar:'Grammar'}[cur];
   card.innerHTML=`<div class="result" style="display:grid;gap:14px">
     <span class="label">${DRILLS[cur].name} · round complete</span>
     <div class="score" style="color:var(${pass?'--ok':'--red'})">${st.score}/20</div>
@@ -1322,7 +1500,8 @@ const LEVELS=[
  {name:'Builder',ko:'뼈대',can:'You can build simple sentences about who, what and where.',req:()=>[['Grammar lessons 1–10 done',lessonsDone(0,9),10,''],['Particles drill, best score',bestOf('particles'),18,'/20'],['Words known',knownCount(),80,'']]},
  {name:'Sentence maker',ko:'문장',can:'You can say what you do, did, will do, want and can do.',req:()=>[['Grammar lessons 11–20 done',lessonsDone(10,19),10,''],['Verb forms drill, best score',bestOf('verbs'),18,'/20'],['Words known',knownCount(),160,'']]},
  {name:'Connector',ko:'연결',can:'You can join ideas and ask real questions.',req:()=>[['Grammar lessons 21–28 done',lessonsDone(20,27),8,''],['Words drill, best score',bestOf('words'),18,'/20'],['Words known',knownCount(),220,'']]},
- {name:'Survival ready',ko:'생존',can:'You can handle everyday survival situations in Korean.',req:()=>[['Phrases marked known',phrCount(),Math.ceil(PHR_TOTAL*.8),''],['Words known',knownCount(),240,'']]}
+ {name:'Survival ready',ko:'생존',can:'You can handle everyday survival situations in Korean.',req:()=>[['Phrases marked known',phrCount(),Math.ceil(PHR_TOTAL*.8),''],['Words known',knownCount(),240,'']]},
+ {name:'Intermediate track',ko:'중급',can:'You can explain, compare, report what others said and adjust politeness.',req:()=>[['Lessons 29–50 done',lessonsDone(28,49),22,''],['Grammar check drill, best score',bestOf('grammar'),18,'/20']]}
 ];
 const met=r=>r.every(x=>x[1]>=x[2]);
 function level(){let n=0;for(let i=1;i<LEVELS.length;i++){if(met(LEVELS[i].req()))n=i;else break}return n}
@@ -1402,8 +1581,8 @@ function renderProgress(){
   if(next){const req=next.req(),pct=Math.round(req.reduce((a,r)=>a+Math.min(1,r[1]/r[2]),0)/req.length*100);
     lv+=`<div class="row" style="justify-content:space-between;font-size:.88rem"><span>Next: <b>Level ${n+1} · ${next.name}</b></span><span class="muted">${pct}%</span></div><div class="meter" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Progress to level ${n+1}"><i style="width:${pct}%"></i></div>
     <ul class="reqs">${req.map(r=>`<li class="${r[1]>=r[2]?'met':''}"><span class="ck">${r[1]>=r[2]?'✓':'○'}</span><span>${r[0]} ≥ ${r[2]}${r[3]}</span><span class="v">${Math.min(r[1],999)}${r[3]}</span></li>`).join('')}</ul>`;
-  }else lv+=`<p><b>Top level on this site.</b> Take a TOPIK I practice paper to check yourself against the real thing.</p>`;
-  lv+=`<p class="caveat">Estimated from your work on this site, not a test. Level 5 is roughly CEFR A1. TOPIK I Level 1 is commonly said to need around 800 words, more than this site's 247, so check yourself with a practice paper.</p>`;
+  }else lv+=`<p><b>Top level on this site.</b> Take a TOPIK practice paper to check yourself against the real thing.</p>`;
+  lv+=`<p class="caveat">Estimated from your work on this site, not a test. Levels 1–5 follow the survival plan; Level 5 is roughly CEFR A1. Level 6 covers the intermediate lessons for after you arrive. TOPIK I Level 1 is commonly said to need around 800 words, more than this site's 247, so check yourself with a practice paper.</p>`;
   $('pLevel').innerHTML=lv;
   /* today */
   const r=plog[TODAY]||{xp:0,rev:0,nw:0,dc:0,dr:0},pct=Math.min(1,r.xp/goal),C=2*Math.PI*34;
