@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Batchim: a date-fitted Korean study plan with Hangul, sound rules, grammar, flashcards, a verb conjugator and drills.">
+<meta name="description" content="Batchim: a date-fitted Korean study plan with Hangul, sound rules, grammar, flashcards, a verb conjugator, drills and progress tracking.">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Batchim</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -252,6 +252,73 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
 .prose article{display:grid;gap:10px}
 .prose ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
 .prose .ko{font-weight:700}
+
+/* Progress */
+:root{--heat0:#dfe6e1;--heat1:#c3d3ee;--heat2:#7e9fd6;--heat3:#1d4b9b;--track:#dde6f4}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--heat0:#1e2925;--heat1:#22324f;--heat2:#3c5f9c;--heat3:#92b2ef;--track:#1b263d}}
+:root[data-theme="dark"]{--heat0:#1e2925;--heat1:#22324f;--heat2:#3c5f9c;--heat3:#92b2ef;--track:#1b263d}
+#progress{display:grid;gap:16px}
+#progress[hidden]{display:none!important}
+#progress .intro{margin-bottom:8px}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.pgrid{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:12px;align-content:start;min-width:0}
+.phead{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;justify-content:space-between}
+.phead .muted{font-size:.85rem}
+.lvl .lnum{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.lvl .lnum b{font-family:var(--f-body);font-size:3.4rem;font-weight:600;line-height:1}
+.lvl .lnum span{font-family:var(--f-display);font-size:1.6rem;font-weight:700}
+.lvl .lnum small{font-family:var(--f-display);font-size:1.1rem;color:var(--celadon);font-weight:700}
+.reqs{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.92rem}
+.reqs li{display:flex;gap:10px;align-items:baseline}
+.reqs .ck{flex:none;width:1.3em;font-weight:700;color:var(--muted)}
+.reqs li.met{color:var(--muted)}
+.reqs li.met .ck{color:var(--ok)}
+.reqs .v{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap;padding-left:8px}
+.meter{height:8px;border-radius:4px;background:var(--track);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:4px;transition:width .4s}
+.caveat{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.today .ring{display:flex;gap:18px;align-items:center}
+.today .ring svg{flex:none}
+.today .big{font-size:2.4rem;font-weight:600;line-height:1}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px}
+.kpis div{display:grid;gap:2px}
+.kpis b{font-size:1.5rem;font-weight:600;line-height:1.1}
+.kpis span{font-size:.8rem;color:var(--muted)}
+.skill{display:grid;grid-template-columns:150px minmax(0,1fr) 3.5em;gap:12px;align-items:center;font-size:.95rem}
+.skill .pct{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.skill small{display:block;font-size:.78rem;color:var(--muted)}
+@media (max-width:520px){.skill{grid-template-columns:1fr 3em}.skill .meter{grid-column:1 / -1;grid-row:2}}
+.heat-wrap{overflow-x:auto;padding-bottom:4px}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,14px);gap:3px;width:max-content}
+.heat i{width:14px;height:14px;border-radius:3px;background:var(--heat0);display:block}
+.heat i.h1{background:var(--heat1)}.heat i.h2{background:var(--heat2)}.heat i.h3{background:var(--heat3)}
+.heat i.fut{background:transparent;box-shadow:inset 0 0 0 1px var(--line)}
+.heat i.pad{visibility:hidden}
+.heat i.tod{box-shadow:0 0 0 2px var(--ink)}
+.heat i:hover,.heat i:focus{outline:2px solid var(--ink);outline-offset:1px}
+.heat-legend{display:flex;gap:5px;align-items:center;font-size:.78rem;color:var(--muted)}
+.heat-legend i{width:12px;height:12px;border-radius:3px;display:inline-block;background:var(--heat0)}
+.heat-legend .h1{background:var(--heat1)}.heat-legend .h2{background:var(--heat2)}.heat-legend .h3{background:var(--heat3)}
+.chart{position:relative;min-height:200px}
+.chart svg{display:block;width:100%;overflow:visible}
+.chart .ax{fill:var(--muted);font-size:11px;font-family:var(--f-body)}
+.chart .gl{stroke:var(--line);stroke-width:1}
+.chart .bar{fill:var(--accent)}
+.chart .bar.goal{fill:var(--ok)}
+.chart .hit{fill:transparent;cursor:default}
+.chart .hit:hover+.bar,.chart g.on .bar{opacity:.75}
+.tt{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:.8rem;padding:6px 9px;border-radius:5px;white-space:nowrap;transform:translate(-50%,-110%);z-index:2}
+.tt b{font-weight:600;font-size:.95rem}
+.empty{color:var(--muted);font-size:.9rem;padding:24px 0;text-align:center}
+.pstat{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;padding:2px 8px;border-radius:99px}
+.pstat.pass{background:var(--ok-soft);color:var(--ok)}
+.pstat.no{background:var(--bg);color:var(--muted)}
+.pk{border:1px solid var(--line);background:none;border-radius:99px;padding:3px 10px;font-size:.8rem;color:var(--muted);grid-column:3;grid-row:1 / span 2}
+.pk[aria-pressed="true"]{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.phr li{grid-template-columns:minmax(0,1fr) auto auto}
+.xpfly{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--accent);color:var(--bg);font-weight:600;padding:6px 12px;border-radius:99px;font-size:.9rem;z-index:20;opacity:0;transform:translateY(8px);transition:opacity .2s,transform .2s;pointer-events:none}
+.xpfly.on{opacity:1;transform:none}
 </style>
 </head>
 <body>
@@ -269,8 +336,8 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
     <div class="stats">
       <div class="stat"><div class="n" id="daysLeft">–</div><div class="t">days left</div></div>
       <div class="stat"><div class="n" id="phaseNow">–</div><div class="t">current phase</div></div>
-      <div class="stat"><div class="n" id="wordTarget">–</div><div class="t">words by today (target)</div></div>
-      <div class="stat"><div class="n" id="wordsKnown">0</div><div class="t">words you know</div></div>
+      <div class="stat"><div class="n" id="heroLevel">–</div><div class="t" id="heroLevelName">level</div></div>
+      <div class="stat"><div class="n" id="heroStreak">0</div><div class="t">day streak</div></div>
     </div>
   </div>
   <div class="block" aria-label="The syllable 받 broken into its parts">
@@ -283,7 +350,8 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
 
 <nav class="tabs" aria-label="Sections">
   <div class="wrap" role="tablist">
-    <button role="tab" data-tab="plan" aria-selected="true">Plan</button>
+    <button role="tab" data-tab="progress" aria-selected="true">Progress</button>
+    <button role="tab" data-tab="plan" aria-selected="false">Plan</button>
     <button role="tab" data-tab="hangul" aria-selected="false">Hangul</button>
     <button role="tab" data-tab="rules" aria-selected="false">Sound rules</button>
     <button role="tab" data-tab="grammar" aria-selected="false">Grammar</button>
@@ -298,8 +366,45 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
 </nav>
 
 <main class="wrap">
+  <!-- PROGRESS -->
+  <section id="progress">
+    <div class="intro">
+      <h2>Your progress</h2>
+      <p class="muted">Your level is earned by passing drills, finishing lessons and learning words, not by time spent. Each level lists exactly what's left to reach the next one.</p>
+    </div>
+    <div class="pgrid">
+      <article class="panel lvl" id="pLevel"></article>
+      <article class="panel today" id="pToday"></article>
+    </div>
+    <div class="panel" id="pSkills"></div>
+    <div class="panel">
+      <div class="phead"><h3>Study calendar</h3><span class="muted" id="pCalNote"></span></div>
+      <div class="heat-wrap" id="pCal"></div>
+      <div class="heat-legend"><span>None</span><i class="h0"></i><i class="h1"></i><i class="h2"></i><i class="h3"></i><span>Goal met</span></div>
+    </div>
+    <div class="pgrid">
+      <div class="panel"><div class="phead"><h3>Daily XP</h3><span class="muted">last 30 days · dashed line is your goal</span></div><div class="chart" id="pXp"></div></div>
+      <div class="panel"><div class="phead"><h3>Words known</h3><span class="muted">cards passed at least twice</span></div><div class="chart" id="pWords"></div></div>
+    </div>
+    <div class="panel">
+      <div class="phead"><h3>Drills</h3><span class="muted">pass mark 18/20</span></div>
+      <div class="tbl-wrap"><table class="tbl" id="pDrills"></table></div>
+    </div>
+    <div class="panel" id="pTotals"></div>
+    <div class="panel">
+      <div class="phead"><h3>Move or reset your progress</h3></div>
+      <p class="muted" style="max-width:66ch">Progress is stored in this browser only. To continue on another device, export here and import there.</p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn ghost" type="button" id="pExport">Export progress</button>
+        <label class="btn ghost" for="pImport" style="cursor:pointer">Import progress<input type="file" id="pImport" accept="application/json,.json" hidden></label>
+        <button class="btn ghost" type="button" id="pReset" style="color:var(--red);border-color:var(--red)">Reset everything</button>
+      </div>
+      <p id="pMsg" class="muted" style="margin-top:8px" aria-live="polite"></p>
+    </div>
+  </section>
+
   <!-- PLAN -->
-  <section id="plan">
+  <section id="plan" hidden>
     <div class="intro">
       <h2>The plan</h2>
       <p class="muted">About 65 minutes a day. Phases are in order on purpose: vocabulary learned with the wrong pronunciation is harder to fix than to learn right.</p>
@@ -445,7 +550,7 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
   <section id="phrases" hidden>
     <div class="intro">
       <h2>Survival phrases</h2>
-      <p class="muted">For Phase 5. Turn on self-test to hide the Korean; hover or tab onto a line to check yourself.</p>
+      <p class="muted">For Phase 5. Turn on self-test to hide the Korean; hover or tab onto a line to check yourself. Mark a phrase known once you can say it without looking; known phrases count toward your level.</p>
     </div>
     <div class="row" style="justify-content:space-between;margin-bottom:12px">
       <div class="scen" id="scen" style="margin:0"></div>
@@ -551,7 +656,7 @@ table.tbl{border-collapse:collapse;width:100%;font-size:.95rem}
       <a href="https://papago.naver.com" target="_blank" rel="noopener"><span class="use">Translation</span><b>Papago</b><span>Handles Korean better than Google Translate.</span></a>
       <a href="https://www.topik.go.kr" target="_blank" rel="noopener"><span class="use">Benchmark</span><b>TOPIK</b><span>Official test site. Use a past TOPIK I paper as your Phase 5 check.</span></a>
     </div>
-    <p class="note">Audio on this page uses your device's built-in Korean voice. If you hear nothing or an English accent, install a Korean voice in your system's speech settings, or check words in Naver Dictionary. Your ticks, cards and scores are saved in this browser only.</p>
+    <p class="note">Audio on this page uses your device's built-in Korean voice. If you hear nothing or an English accent, install a Korean voice in your system's speech settings, or check words in Naver Dictionary. Your progress is saved in this browser only; use Export on the Progress tab to move it to another device.</p>
   </section>
 </main>
 
@@ -807,10 +912,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(
 
 /* ---------- tabs ---------- */
 const tabs=[...document.querySelectorAll('[data-tab]')];
-function show(id){tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));document.querySelectorAll('main section').forEach(s=>s.hidden=s.id!==id);store.set('kbj-tab',id)}
+function show(id){tabs.forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));document.querySelectorAll('main section').forEach(s=>s.hidden=s.id!==id);store.set('kbj-tab',id);if(id==='progress')renderProgress()}
 function go(id){show(id);const t=document.querySelector('.tabs').offsetTop;if(window.scrollY>t)window.scrollTo({top:t})}
 tabs.forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
-const h0=location.hash.slice(1);show(tabs.some(b=>b.dataset.tab===h0)?h0:store.get('kbj-tab','plan'));
+const h0=location.hash.slice(1);show(tabs.some(b=>b.dataset.tab===h0)?h0:store.get('kbj-tab','progress'));
 
 /* ---------- dates ---------- */
 const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
@@ -863,8 +968,6 @@ function compute(){
   $('rangeLabel').textContent=`${fmt(s)} → ${fmt(e)}`;
   $('daysLeft').textContent=Math.max(0,Math.round((e-today)/864e5));
   $('phaseNow').textContent=today>e?'Done':(nowIdx+1)+' / 6';
-  $('wordTarget').textContent=today<vocabStart?'0':Math.round((today-vocabStart)/864e5+1)*newPer;
-  $('wordsKnown').textContent=knownCount();
 }
 function renderPhases(){
   $('phases').innerHTML=PHASES.map((p,i)=>{
@@ -882,7 +985,7 @@ function renderPhases(){
         <div class="row" style="gap:12px"><div class="bar" style="flex:1"><i style="width:${n/p.tasks.length*100}%"></i></div><span class="muted" style="font-size:.85rem;font-variant-numeric:tabular-nums">${n}/${p.tasks.length}</span></div>
       </div></article>`}).join('');
 }
-$('phases').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;done[k]=e.target.checked;store.set('kbj-tasks2',done);renderPhases()});
+$('phases').addEventListener('change',e=>{const k=e.target.dataset.k;if(!k)return;done[k]=e.target.checked;store.set('kbj-tasks2',done);if(e.target.checked)track('tk');renderPhases()});
 const dS=$('dStart'),dE=$('dEnd');dS.value=cfg.start;dE.value=cfg.end;
 function onDates(){
   const warn=$('dWarn');if(!dS.value||!dE.value)return;
@@ -945,7 +1048,7 @@ function renderLesson(){
 $('gnav').addEventListener('click',e=>{const b=e.target.closest('[data-g]');if(!b)return;gi=+b.dataset.g;store.set('kbj-gi',gi);renderGnav();renderLesson();if(window.innerWidth<760)$('lesson').scrollIntoView({block:'start'})});
 $('lesson').addEventListener('click',e=>{
   const s=e.target.closest('[data-gstep]');if(s){gi=Math.min(GRAMMAR.length-1,Math.max(0,gi+ +s.dataset.gstep));store.set('kbj-gi',gi);renderGnav();renderLesson();$('lesson').scrollIntoView({block:'start'});return}
-  if(e.target.closest('[data-gdone]')){gdone[gi]=!gdone[gi];store.set('kbj-gdone',gdone);renderGnav();renderLesson()}
+  if(e.target.closest('[data-gdone]')){gdone[gi]=!gdone[gi];store.set('kbj-gdone',gdone);if(gdone[gi])track('ls');renderGnav();renderLesson()}
 });
 renderGnav();renderLesson();
 
@@ -955,7 +1058,7 @@ const CATS=[...new Set(VOCAB.map(v=>v.cat))];
 const ORDER=(()=>{const by=CATS.map(c=>VOCAB.filter(v=>v.cat===c));const out=[];let i=0;while(out.length<VOCAB.length){by.forEach(l=>{if(l[i])out.push(l[i])});i++}return out})();
 let wmode='study',wdir=store.get('kbj-wdir','ko'),sess=null;
 $('wNew').value=String(newPer);$('wDir').value=wdir;
-function saveSrs(){store.set('kbj-srs',srs);store.set('kbj-srsday',dayInfo);$('wordsKnown').textContent=knownCount()}
+function saveSrs(){store.set('kbj-srs',srs);store.set('kbj-srsday',dayInfo)}
 function dueList(){return ORDER.filter(v=>srs[v.ko]&&srs[v.ko].due<=TODAY)}
 function newLeft(){return Math.max(0,newPer-dayInfo.n)}
 function renderWstats(){
@@ -990,11 +1093,12 @@ $('wStudy').addEventListener('click',e=>{
   const a=e.target.closest('[data-wa]');if(!a)return;
   const v=sess.q[sess.i],ok=a.dataset.wa==='1',cur=srs[v.ko];
   if(!cur)dayInfo.n++;
+  const wasNew=!cur;
   if(ok){
     if(sess.again.has(v.ko))srs[v.ko]={b:Math.max(1,cur?cur.b:1),due:iso(addDays(today,1))};
     else{const b=Math.min(IV.length-1,(cur?cur.b:0)+1);srs[v.ko]={b,due:iso(addDays(today,IV[b]))}}
   }else{srs[v.ko]={b:0,due:TODAY};sess.again.add(v.ko);sess.q.push(v)}
-  saveSrs();sess.i++;sess.shown=false;renderStudy();
+  saveSrs();track(wasNew?'nw':'rev');sess.i++;sess.shown=false;renderStudy();
 });
 function renderBrowse(){
   const q=$('wSearch').value.trim().toLowerCase(),cat=$('wCat').value;
@@ -1060,11 +1164,13 @@ $('nIn').addEventListener('input',renderNum);renderNum();
 
 /* ---------- phrases ---------- */
 let scen=Object.keys(PHR)[0];
+const phrKnown=store.get('kbj-phr',{});
 function renderPhr(){
   $('scen').innerHTML=Object.keys(PHR).map(k=>`<button class="chip" type="button" data-sc="${k}" aria-pressed="${k===scen}">${k}</button>`).join('');
-  $('phrList').innerHTML=PHR[scen].map(p=>`<li tabindex="0"><span class="kr">${p[0]}</span><span class="en">${p[1]}</span>${listenBtn(p[0].split(' / ')[0])}</li>`).join('');
+  $('phrList').innerHTML=PHR[scen].map(p=>`<li tabindex="0"><span class="kr">${p[0]}</span><span class="en">${p[1]}</span>${listenBtn(p[0].split(' / ')[0])}<button class="pk" type="button" data-pk="${esc(p[0])}" aria-pressed="${!!phrKnown[p[0]]}">${phrKnown[p[0]]?'Known ✓':'Mark known'}</button></li>`).join('');
 }
 $('scen').addEventListener('click',e=>{const b=e.target.closest('[data-sc]');if(b){scen=b.dataset.sc;renderPhr()}});
+$('phrList').addEventListener('click',e=>{const b=e.target.closest('[data-pk]');if(!b)return;const k=b.dataset.pk;phrKnown[k]=!phrKnown[k];if(!phrKnown[k])delete phrKnown[k];else track('pk');store.set('kbj-phr',phrKnown);renderPhr()});
 const selfT=$('selfTest');selfT.checked=store.get('kbj-self',false);
 const applySelf=()=>{$('phrList').classList.toggle('reveal',selfT.checked);store.set('kbj-self',selfT.checked)};
 selfT.addEventListener('change',applySelf);renderPhr();applySelf();
@@ -1146,13 +1252,14 @@ card.addEventListener('click',e=>{
   st.answered=true;const it=st.q[st.i],ok=b.dataset.o===it.ans,first=st.i<20;
   card.querySelectorAll('.opt').forEach(x=>{x.disabled=true;if(x.dataset.o===it.ans)x.classList.add('right')});
   if(!ok){b.classList.add('wrong');if(first){st.missed.push(it.show);st.q.push({...it,opts:shuffle(it.opts)})}}
-  else if(first)st.score++;
+  else if(first){st.score++;track('dc')}
   $('fb').innerHTML=`<div class="fb ${ok?'good':'bad'}"><b>${ok?'Correct.':'Not this time.'}</b><span>The answer is <b class="ko">${it.ans}</b>.</span>${it.hint?`<span>${it.hint}</span>`:''}</div>
    <div class="row" style="margin-top:12px"><button class="btn" type="button" data-next>Next</button>${listenBtn(it.say)}</div>`;
   card.querySelector('[data-next]').focus();
 });
 function renderEnd(){
   const prev=best[cur];if(prev==null||st.score>prev){best[cur]=st.score;store.set('kbj-best',best)}
+  recordDrill(cur,st.score);
   const pass=st.score>=18,where={letters:'Hangul',rules:'Sound rules',particles:'Grammar (lessons 2–4)',verbs:'Verbs',words:'Words'}[cur];
   card.innerHTML=`<div class="result" style="display:grid;gap:14px">
     <span class="label">${DRILLS[cur].name} · round complete</span>
@@ -1163,6 +1270,197 @@ function renderEnd(){
   renderPick();
 }
 start();
+
+/* ---------- progress ---------- */
+var progInit=false;
+var XP={rev:1,nw:2,dc:1,dr:5,ls:10,tk:5,pk:2};
+var plog=store.get('kbj-log',{});
+var dhist=store.get('kbj-dhist',{});
+var goal=+store.get('kbj-goal',30);
+var xpTimer=null;
+
+function dayRec(d){return plog[d]||(plog[d]={xp:0,rev:0,nw:0,dc:0,dr:0,ls:0,tk:0,pk:0})}
+function track(kind,n){
+  n=n||1;const r=dayRec(TODAY),before=r.xp;
+  r[kind]=(r[kind]||0)+n;r.xp+=XP[kind]*n;r.k=knownCount();
+  store.set('kbj-log',plog);
+  flyXp(XP[kind]*n,before<goal&&r.xp>=goal);
+  renderHero();
+}
+function recordDrill(id,score){
+  (dhist[id]=dhist[id]||[]).push({d:TODAY,s:score});
+  if(dhist[id].length>40)dhist[id]=dhist[id].slice(-40);
+  store.set('kbj-dhist',dhist);
+  track('dr');
+}
+function flyXp(n,goalHit){
+  let el=document.querySelector('.xpfly');
+  if(!el){el=document.createElement('div');el.className='xpfly';el.setAttribute('aria-hidden','true');document.body.appendChild(el)}
+  el.textContent=goalHit?`+${n} XP · daily goal met`:`+${n} XP`;
+  el.classList.add('on');clearTimeout(xpTimer);xpTimer=setTimeout(()=>el.classList.remove('on'),goalHit?2200:900);
+}
+const xpOn=d=>(plog[d]&&plog[d].xp)||0;
+function streak(){
+  let n=0,d=new Date(today);
+  if(xpOn(iso(d))<goal)d=addDays(d,-1);
+  while(xpOn(iso(d))>=goal){n++;d=addDays(d,-1)}
+  return n;
+}
+function bestStreak(){
+  const days=Object.keys(plog).filter(d=>plog[d].xp>=goal).sort();let b=0,run=0,prev=null;
+  days.forEach(d=>{run=prev&&iso(addDays(D(prev),1))===d?run+1:1;b=Math.max(b,run);prev=d});return b;
+}
+
+/* levels */
+const lessonsDone=(a,b)=>GRAMMAR.reduce((n,_,i)=>n+(i>=a&&i<=b&&gdone[i]?1:0),0);
+const bestOf=k=>best[k]==null?0:best[k];
+const PHR_TOTAL=Object.values(PHR).reduce((n,l)=>n+l.length,0);
+const phrCount=()=>Object.values(PHR).flat().filter(p=>phrKnown[p[0]]).length;
+const LEVELS=[
+ {name:'Starting out',ko:'시작',can:'Working on reading Hangul correctly.'},
+ {name:'Reader',ko:'읽기',can:'You can read any Korean word aloud correctly.',req:()=>[['Letters drill, best score',bestOf('letters'),18,'/20'],['Sound rules drill, best score',bestOf('rules'),18,'/20']]},
+ {name:'Builder',ko:'뼈대',can:'You can build simple sentences about who, what and where.',req:()=>[['Grammar lessons 1–10 done',lessonsDone(0,9),10,''],['Particles drill, best score',bestOf('particles'),18,'/20'],['Words known',knownCount(),80,'']]},
+ {name:'Sentence maker',ko:'문장',can:'You can say what you do, did, will do, want and can do.',req:()=>[['Grammar lessons 11–20 done',lessonsDone(10,19),10,''],['Verb forms drill, best score',bestOf('verbs'),18,'/20'],['Words known',knownCount(),160,'']]},
+ {name:'Connector',ko:'연결',can:'You can join ideas and ask real questions.',req:()=>[['Grammar lessons 21–28 done',lessonsDone(20,27),8,''],['Words drill, best score',bestOf('words'),18,'/20'],['Words known',knownCount(),220,'']]},
+ {name:'Survival ready',ko:'생존',can:'You can handle everyday survival situations in Korean.',req:()=>[['Phrases marked known',phrCount(),Math.ceil(PHR_TOTAL*.8),''],['Words known',knownCount(),240,'']]}
+];
+const met=r=>r.every(x=>x[1]>=x[2]);
+function level(){let n=0;for(let i=1;i<LEVELS.length;i++){if(met(LEVELS[i].req()))n=i;else break}return n}
+
+function renderHero(){
+  if(!progInit)return;
+  const n=level();
+  $('heroLevel').textContent=n;
+  $('heroLevelName').textContent='level · '+LEVELS[n].name;
+  $('heroStreak').textContent=streak();
+}
+
+/* charts */
+function niceMax(v){if(v<=5)return 5;const p=Math.pow(10,Math.floor(Math.log10(v))),m=v/p;return (m<=1?1:m<=2?2:m<=5?5:10)*p}
+function tipFor(box){let t=box.querySelector('.tt');if(!t){t=document.createElement('div');t.className='tt';t.hidden=true;box.appendChild(t)}return t}
+function showTip(box,x,y,val,lab){const t=tipFor(box);t.textContent='';const b=document.createElement('b');b.textContent=val;t.appendChild(b);t.appendChild(document.createTextNode(' · '+lab));t.style.left=x+'px';t.style.top=y+'px';t.hidden=false}
+function hideTip(box){const t=box.querySelector('.tt');if(t)t.hidden=true}
+const sday=d=>d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+
+function xpChart(){
+  const box=$('pXp'),W=Math.max(280,box.clientWidth||600),H=210,L=34,R=8,T=14,B=26;
+  const days=[...Array(30)].map((_,i)=>addDays(today,i-29)),vals=days.map(d=>xpOn(iso(d)));
+  const max=niceMax(Math.max(goal,...vals)),pw=W-L-R,ph=H-T-B,band=pw/30,bw=Math.min(24,band-2);
+  const y=v=>T+ph-v/max*ph;
+  let s=`<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Daily XP for the last 30 days. Today: ${vals[29]} XP. Goal: ${goal} XP.">`;
+  [0,max/2,max].forEach(t=>{s+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L-6}" y="${y(t)+4}" text-anchor="end">${t}</text>`});
+  days.forEach((d,i)=>{const v=vals[i],x=L+i*band+(band-bw)/2,top=y(v),h=T+ph-top;
+    const bar=v>0?`<path class="bar" d="M${x},${T+ph} V${top+Math.min(4,h)} Q${x},${top} ${x+Math.min(4,bw/2)},${top} H${x+bw-Math.min(4,bw/2)} Q${x+bw},${top} ${x+bw},${top+Math.min(4,h)} V${T+ph} Z"/>`:'';
+    s+=`<g data-i="${i}"><rect class="hit" x="${L+i*band}" y="${T}" width="${band}" height="${ph}"/>${bar}</g>`;
+    if(i%7===1||i===29)s+=`<text class="ax" x="${L+i*band+band/2}" y="${H-8}" text-anchor="middle">${i===29?'Today':sday(d)}</text>`});
+  s+=`<line x1="${L}" x2="${W-R}" y1="${y(goal)}" y2="${y(goal)}" stroke="var(--ink)" stroke-width="1" stroke-dasharray="4 4" opacity=".55"/>`;
+  s+='</svg>';box.innerHTML=s;
+  box.querySelector('svg').addEventListener('pointermove',e=>{const g=e.target.closest('g[data-i]');box.querySelectorAll('g.on').forEach(x=>x.classList.remove('on'));if(!g)return hideTip(box);g.classList.add('on');const i=+g.dataset.i,r=box.getBoundingClientRect();showTip(box,e.clientX-r.left,y(vals[i])-4,`${vals[i]} XP`,`${sday(days[i])}${vals[i]>=goal?' · goal met':''}`)});
+  box.querySelector('svg').addEventListener('pointerleave',()=>{hideTip(box);box.querySelectorAll('g.on').forEach(x=>x.classList.remove('on'))});
+}
+function wordsChart(){
+  const box=$('pWords'),logged=Object.keys(plog).filter(d=>plog[d].k!=null).sort();
+  if(logged.length<2){box.innerHTML=`<p class="empty">${knownCount()} words known so far. The line appears after your second day of study.</p>`;return}
+  const start=D(logged[0]),n=Math.round((today-start)/864e5)+1,pts=[];let last=0;
+  for(let i=0;i<n;i++){const d=iso(addDays(start,i));if(plog[d]&&plog[d].k!=null)last=plog[d].k;pts.push(last)}
+  pts[pts.length-1]=knownCount();
+  const W=Math.max(280,box.clientWidth||600),H=210,L=34,R=40,T=14,B=26,pw=W-L-R,ph=H-T-B,max=niceMax(Math.max(10,...pts));
+  const x=i=>L+(n===1?pw:i/(n-1)*pw),y=v=>T+ph-v/max*ph;
+  const line=pts.map((v,i)=>`${i?'L':'M'}${x(i)},${y(v)}`).join('');
+  let s=`<svg viewBox="0 0 ${W} ${H}" height="${H}" role="img" aria-label="Words known over time, now ${pts[n-1]}.">`;
+  [0,max/2,max].forEach(t=>{s+=`<line class="gl" x1="${L}" x2="${W-R}" y1="${y(t)}" y2="${y(t)}"/><text class="ax" x="${L-6}" y="${y(t)+4}" text-anchor="end">${t}</text>`});
+  s+=`<path d="${line}L${x(n-1)},${T+ph}L${x(0)},${T+ph}Z" fill="var(--accent)" opacity=".1"/>`;
+  s+=`<path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  s+=`<line class="xh" x1="0" x2="0" y1="${T}" y2="${T+ph}" stroke="var(--muted)" stroke-width="1" visibility="hidden"/>`;
+  s+=`<circle cx="${x(n-1)}" cy="${y(pts[n-1])}" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`;
+  s+=`<text class="ax" x="${x(n-1)+8}" y="${y(pts[n-1])+4}" style="fill:var(--ink);font-weight:600">${pts[n-1]}</text>`;
+  s+=`<text class="ax" x="${L}" y="${H-8}">${sday(start)}</text><text class="ax" x="${W-R}" y="${H-8}" text-anchor="end">Today</text></svg>`;
+  box.innerHTML=s;
+  const svg=box.querySelector('svg'),xh=svg.querySelector('.xh');
+  svg.addEventListener('pointermove',e=>{const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)*W/r.width,i=Math.max(0,Math.min(n-1,Math.round((px-L)/pw*(n-1))));xh.setAttribute('x1',x(i));xh.setAttribute('x2',x(i));xh.setAttribute('visibility','visible');showTip(box,x(i)*r.width/W,y(pts[i])*r.height/H-6,`${pts[i]} words`,sday(addDays(start,i)))});
+  svg.addEventListener('pointerleave',()=>{xh.setAttribute('visibility','hidden');hideTip(box)});
+}
+function calendar(){
+  const s=D(cfg.start),e=D(cfg.end),first=addDays(s,-((s.getDay()+6)%7)),days=Math.round((e-first)/864e5)+1;
+  let html='<div class="heat" role="img" aria-label="Study calendar from start to target date">',met=0,studied=0;
+  for(let i=0;i<days;i++){const d=addDays(first,i),k=iso(d),v=xpOn(k);
+    if(d<s){html+='<i class="pad"></i>';continue}
+    const fut=d>today,c=fut?'fut':v>=goal?'h3':v>=goal/2?'h2':v>0?'h1':'';
+    if(!fut&&v>=goal)met++;if(!fut&&v>0)studied++;
+    html+=`<i class="${c}${k===TODAY?' tod':''}" title="${sday(d)}: ${fut?'upcoming':v+' XP'+(v>=goal?' · goal met':'')}"></i>`}
+  $('pCal').innerHTML=html+'</div>';
+  const past=Math.max(0,Math.min(Math.round((today-s)/864e5)+1,Math.round((e-s)/864e5)+1));
+  $('pCalNote').textContent=`${met} of ${past} day${past===1?'':'s'} at goal so far · ${studied} days studied`;
+}
+
+function renderProgress(){
+  if(!progInit)return;
+  renderHero();
+  const n=level(),next=LEVELS[n+1];
+  /* level card */
+  let lv=`<span class="label">Your level</span><div class="lnum"><b>${n}</b><span>${LEVELS[n].name}</span><small>${LEVELS[n].ko}</small></div><p>${LEVELS[n].can}</p>`;
+  if(next){const req=next.req(),pct=Math.round(req.reduce((a,r)=>a+Math.min(1,r[1]/r[2]),0)/req.length*100);
+    lv+=`<div class="row" style="justify-content:space-between;font-size:.88rem"><span>Next: <b>Level ${n+1} · ${next.name}</b></span><span class="muted">${pct}%</span></div><div class="meter" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Progress to level ${n+1}"><i style="width:${pct}%"></i></div>
+    <ul class="reqs">${req.map(r=>`<li class="${r[1]>=r[2]?'met':''}"><span class="ck">${r[1]>=r[2]?'✓':'○'}</span><span>${r[0]} ≥ ${r[2]}${r[3]}</span><span class="v">${Math.min(r[1],999)}${r[3]}</span></li>`).join('')}</ul>`;
+  }else lv+=`<p><b>Top level on this site.</b> Take a TOPIK I practice paper to check yourself against the real thing.</p>`;
+  lv+=`<p class="caveat">Estimated from your work on this site, not a test. Level 5 is roughly CEFR A1. TOPIK I Level 1 is commonly said to need around 800 words, more than this site's 247, so check yourself with a practice paper.</p>`;
+  $('pLevel').innerHTML=lv;
+  /* today */
+  const r=plog[TODAY]||{xp:0,rev:0,nw:0,dc:0,dr:0},pct=Math.min(1,r.xp/goal),C=2*Math.PI*34;
+  const week=[...Array(7)].reduce((a,_,i)=>a+xpOn(iso(addDays(today,-i))),0);
+  $('pToday').innerHTML=`<div class="phead"><span class="label">Today</span><label class="row" style="gap:6px;font-size:.85rem">Daily goal<select class="field" id="pGoal" style="padding:4px 8px">${[10,20,30,50,80].map(g=>`<option value="${g}"${g===goal?' selected':''}>${g} XP</option>`).join('')}</select></label></div>
+   <div class="ring"><svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="34" fill="none" stroke="var(--track)" stroke-width="8"/><circle cx="42" cy="42" r="34" fill="none" stroke="${pct>=1?'var(--ok)':'var(--accent)'}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C*pct} ${C}" transform="rotate(-90 42 42)"/></svg>
+    <div><div class="big">${r.xp}<span class="muted" style="font-size:1rem;font-weight:400"> / ${goal} XP</span></div><p class="muted" style="font-size:.9rem;margin-top:4px">${pct>=1?'Goal met. Your streak is safe today.':r.xp?`${goal-r.xp} XP to go.`:'Nothing yet today. One drill round is about 20 XP.'}</p></div></div>
+   <div class="kpis"><div><b>${streak()}</b><span>day streak</span></div><div><b>${bestStreak()}</b><span>best streak</span></div><div><b>${(r.rev||0)+(r.nw||0)}</b><span>cards today</span></div><div><b>${week}</b><span>XP this week</span></div></div>
+   <p class="caveat">XP: card review 1 · new card 2 · drill answer right first try 1 · finished drill round 5 · lesson done 10 · plan task 5 · phrase known 2.</p>`;
+  $('pGoal').addEventListener('change',e=>{goal=+e.target.value;store.set('kbj-goal',goal);renderProgress()});
+  /* skills */
+  const kc=knownCount(),lt=GRAMMAR.filter((_,i)=>gdone[i]).length;
+  const SK=[
+   ['Reading Hangul','Letters drill, best',bestOf('letters')/20],
+   ['Pronunciation','Sound rules drill, best',bestOf('rules')/20],
+   ['Vocabulary',`${kc} of ${VOCAB.length} known · Words drill`,.7*kc/VOCAB.length+.3*bestOf('words')/20],
+   ['Grammar',`${lt} of ${GRAMMAR.length} lessons · Particles and Verb drills`,.6*lt/GRAMMAR.length+.4*(bestOf('particles')+bestOf('verbs'))/40],
+   ['Survival phrases',`${phrCount()} of ${PHR_TOTAL} marked known`,phrCount()/PHR_TOTAL]
+  ];
+  $('pSkills').innerHTML=`<div class="phead"><h3>Skills</h3><span class="muted">what each bar is built from is under its name</span></div>`+SK.map(s=>{const p=Math.round(Math.min(1,s[2])*100);return `<div class="skill"><div>${s[0]}<small>${s[1]}</small></div><div class="meter" role="progressbar" aria-valuenow="${p}" aria-valuemin="0" aria-valuemax="100" aria-label="${s[0]}"><i style="width:${p}%"></i></div><span class="pct">${p}%</span></div>`}).join('');
+  /* drills */
+  $('pDrills').innerHTML=`<thead><tr><th>Drill</th><th>Phase</th><th>Best</th><th>Last</th><th>Rounds</th><th>Status</th></tr></thead><tbody>${Object.entries(DRILLS).map(([k,d])=>{const h=dhist[k]||[],b=best[k];return `<tr><th style="color:var(--ink)">${d.name}</th><td>${d.sub.replace('Phase ','')}</td><td style="font-variant-numeric:tabular-nums">${b!=null?b+'/20':'—'}</td><td style="font-variant-numeric:tabular-nums">${h.length?h[h.length-1].s+'/20':'—'}</td><td style="font-variant-numeric:tabular-nums">${h.length}</td><td>${b!=null&&b>=18?'<span class="pstat pass">✓ Passed</span>':'<span class="pstat no">Not yet</span>'}</td></tr>`}).join('')}</tbody>`;
+  /* totals */
+  const tot=Object.values(plog).reduce((a,d)=>{for(const k in d)if(typeof d[k]==='number'&&k!=='k')a[k]=(a[k]||0)+d[k];return a},{});
+  const studied=Object.values(plog).filter(d=>d.xp>0).length;
+  $('pTotals').innerHTML=`<div class="phead"><h3>All time</h3></div><div class="kpis">
+   <div><b>${(tot.xp||0).toLocaleString()}</b><span>total XP</span></div><div><b>${studied}</b><span>days studied</span></div><div><b>${kc}</b><span>words known</span></div>
+   <div><b>${((tot.rev||0)+(tot.nw||0)).toLocaleString()}</b><span>cards answered</span></div><div><b>${tot.dr||0}</b><span>drill rounds</span></div><div><b>${lt}</b><span>lessons done</span></div>
+   <div><b>${Object.values(done).filter(Boolean).length}</b><span>plan tasks ticked</span></div></div>`;
+  calendar();xpChart();wordsChart();
+}
+
+/* export / import / reset */
+$('pExport').addEventListener('click',()=>{
+  const data={};try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k.startsWith('kbj-'))data[k]=JSON.parse(localStorage.getItem(k))}}catch(e){}
+  const blob=new Blob([JSON.stringify({app:'batchim',v:1,exported:new Date().toISOString(),data},null,1)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`batchim-progress-${TODAY}.json`;document.body.appendChild(a);a.click();a.remove();
+  $('pMsg').textContent='Progress exported. Import that file on your other device.';
+});
+$('pImport').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{try{const j=JSON.parse(rd.result);if(j.app!=='batchim'||!j.data)throw 0;Object.entries(j.data).forEach(([k,v])=>{if(k.startsWith('kbj-'))localStorage.setItem(k,JSON.stringify(v))});$('pMsg').textContent='Imported. Reloading…';setTimeout(()=>location.reload(),600)}
+    catch(_){$('pMsg').textContent='That file isn’t a Batchim progress export. Choose the .json file made by Export progress.'}};
+  rd.readAsText(f);
+});
+let resetArm=null;
+$('pReset').addEventListener('click',()=>{
+  const b=$('pReset');
+  if(!resetArm){b.textContent='Click again to erase all progress';resetArm=setTimeout(()=>{b.textContent='Reset everything';resetArm=null},5000);return}
+  try{Object.keys(localStorage).filter(k=>k.startsWith('kbj-')).forEach(k=>localStorage.removeItem(k))}catch(e){}
+  location.reload();
+});
+let rsz=null;window.addEventListener('resize',()=>{clearTimeout(rsz);rsz=setTimeout(()=>{if(!$('progress').hidden){xpChart();wordsChart()}},150)});
+
+progInit=true;
+renderHero();
+if(!$('progress').hidden)renderProgress();
 
 })();
 </script>
